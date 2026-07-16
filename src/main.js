@@ -251,6 +251,7 @@ createApp({
       this.exporting = true
       this.exportMessage = ''
       try {
+        await this.$nextTick()
         await document.fonts.ready
         const canvas = await html2canvas(this.$refs.reportContent, { backgroundColor: '#ffffff', scale: 2, useCORS: true, logging: false })
         const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'))
@@ -278,7 +279,7 @@ createApp({
         </div>
       </header>
 
-      <div ref="reportContent">
+      <div ref="reportContent" :class="{ 'is-exporting': exporting }">
         <section id="top" class="hero">
           <div class="hero-title-row">
             <div>
@@ -347,7 +348,8 @@ createApp({
 
             <section class="notes-card">
               <div class="section-heading"><span class="number">04</span><div><h2>{{ t('notesTitle') }}</h2><p>{{ t('notesSub') }}</p></div></div>
-              <textarea v-model.trim="form.notes" :placeholder="t('notesPlaceholder')"></textarea>
+              <textarea class="notes-input" v-model.trim="form.notes" :placeholder="t('notesPlaceholder')"></textarea>
+              <div class="notes-export">{{ form.notes }}</div>
             </section>
           </section>
         </div>

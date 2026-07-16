@@ -113,8 +113,12 @@ h1 { margin: 0; color: #063f70; font-size: clamp(31px, 4vw, 48px); line-height: 
 .remove-directive:hover { background: #ffe900; color: #064f83; }
 
 .notes-card { margin-top: 34px; }
-.notes-card textarea { display: block; min-height: 130px; width: 100%; padding: 13px; color: #143f60; background: #fff; border: 1px solid #b8ddec; border-radius: 8px; resize: vertical; line-height: 1.65; outline: 0; }
+.notes-card textarea, .notes-export { display: block; min-height: 130px; width: 100%; padding: 13px; color: #143f60; background: #fff; border: 1px solid #b8ddec; border-radius: 8px; line-height: 1.65; outline: 0; }
+.notes-card textarea { resize: vertical; }
 .notes-card textarea::placeholder { color: #99aebb; }
+.notes-export { display: none; white-space: pre-wrap; overflow-wrap: anywhere; word-break: break-word; }
+.is-exporting .notes-input { display: none; }
+.is-exporting .notes-export { display: block; }
 
 .export-wrap { display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 30px auto 0; }
 .export-button { min-width: 184px; border: 0; border-radius: 9px; padding: 13px 20px; color: #fff; background: #009fe3; font-weight: 800; box-shadow: 0 10px 22px #009fe333; }
