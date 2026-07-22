@@ -69,6 +69,49 @@ h1 { margin: 0; color: #063f70; font-size: clamp(31px, 4vw, 48px); line-height: 
   color: #113a5c;
 }
 .info-fields input:focus, .info-fields select:focus, .directive-picker select:focus, textarea:focus { border-color: #00a9e8; box-shadow: 0 0 0 3px #d7f4ff; }
+.date-field { position: relative; }
+.date-control { position: relative; margin-top: 8px; }
+.date-input {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 42px;
+  padding: 0 10px;
+  border: 1px solid #b8ddec;
+  border-radius: 8px;
+  background: #fff;
+  color: #113a5c;
+  font-weight: 700;
+  text-align: left;
+}
+.date-input span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.date-input b { color: #057bb5; font-size: 14px; }
+.date-input:focus { border-color: #00a9e8; box-shadow: 0 0 0 3px #d7f4ff; outline: 0; }
+.date-popover {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 8px);
+  left: 0;
+  width: min(310px, 78vw);
+  padding: 14px;
+  border: 1px solid #b8ddec;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 16px 34px #063f7024;
+}
+.date-popover-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+.date-popover-head button { width: 30px; height: 30px; border: 0; border-radius: 7px; background: #eaf9ff; color: #057bb5; font-size: 20px; font-weight: 800; }
+.date-popover-head strong { color: #123f63; font-size: 13px; }
+.date-weekdays, .date-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+.date-weekdays { margin-bottom: 7px; color: #7891a0; font-size: 10px; font-weight: 800; text-align: center; }
+.date-grid button { height: 31px; border: 0; border-radius: 7px; background: transparent; color: #173e5e; font-size: 12px; font-weight: 700; }
+.date-grid button:not(:disabled):hover { background: #eaf9ff; }
+.date-grid button:disabled { cursor: default; }
+.date-grid button.today { border: 1px solid #00a9e8; }
+.date-grid button.selected { background: #00a9e8; color: #fff; }
+.date-actions { display: flex; justify-content: space-between; margin-top: 12px; }
+.date-actions button { border: 0; background: transparent; color: #057bb5; font-size: 12px; font-weight: 800; }
 
 .audit-section { margin-top: 35px; }
 .group-block { margin: 22px 0 28px; border: 1px solid #d6edf7; border-radius: 10px; overflow: hidden; }

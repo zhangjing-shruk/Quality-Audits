@@ -37,6 +37,9 @@ const standardEnglish = {
   14: { note: 'No late start or early finish.', directive: '[Standard] Time control: no late start or early finish. The final video duration should be 28-32 minutes.' }
 }
 
+const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+const weekdayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+
 const copy = {
   en: {
     saved: 'Auto-saved',
@@ -137,9 +140,12 @@ createApp({
     return {
       standards,
       logoUrl,
+      weekdayNames,
       locale: 'en',
       form: { teacher: '', sessionDate: '', student: '', date: new Date().toISOString().slice(0, 10), result: '', notes: '', ratings: {}, manualDirectives: [] },
       selectedDirective: '',
+      activeDatePicker: '',
+      calendarMonth: new Date().toISOString().slice(0, 7),
       exporting: false,
       exportUrl: '',
       exportFilename: '',
@@ -211,6 +217,47 @@ createApp({
     groupSubtitle(section) {
       return this.locale === 'en' ? '' : section.en
     },
+    dateLabel(value) {
+      return value || 'YYYY-MM-DD'
+    },
+    todayIso() {
+      return new Date().toISOString().slice(0, 10)
+    },
+    openDatePicker(field) {
+      this.activeDatePicker = field
+      this.calendarMonth = (this.form[field] || this.todayIso()).slice(0, 7)
+    },
+    closeDatePicker() {
+      this.activeDatePicker = ''
+    },
+    calendarTitle() {
+      const [year, month] = this.calendarMonth.split('-').map(Number)
+      return `${monthNames[month - 1]} ${year}`
+    },
+    moveCalendarMonth(offset) {
+      const [year, month] = this.calendarMonth.split('-').map(Number)
+      const next = new Date(year, month - 1 + offset, 1)
+      this.calendarMonth = `${next.getFullYear()}-${String(next.getMonth() + 1).padStart(2, '0')}`
+    },
+    calendarCells(field) {
+      const [year, month] = this.calendarMonth.split('-').map(Number)
+      const firstDay = new Date(year, month - 1, 1)
+      const totalDays = new Date(year, month, 0).getDate()
+      const cells = Array.from({ length: firstDay.getDay() }, (_, index) => ({ key: `blank-${index}`, blank: true }))
+      for (let day = 1; day <= totalDays; day += 1) {
+        const iso = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+        cells.push({ key: iso, day, iso, selected: this.form[field] === iso, today: iso === this.todayIso() })
+      }
+      return cells
+    },
+    selectDate(field, iso) {
+      this.form[field] = iso
+      this.closeDatePicker()
+    },
+    clearDate(field) {
+      this.form[field] = ''
+      this.closeDatePicker()
+    },
     saveDraft() {
       localStorage.setItem('quality-audit-draft', JSON.stringify(this.form))
       this.savedAt = new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })
@@ -256,6 +303,7 @@ createApp({
       }
       this.exporting = true
       this.exportMessage = ''
+      this.closeDatePicker()
       try {
         await this.$nextTick()
         await document.fonts.ready
@@ -272,7 +320,7 @@ createApp({
     }
   },
   template: `
-    <main class="page-shell">
+    <main class="page-shell" @click="closeDatePicker">
       <header class="topbar no-export">
         <a class="brand" href="#top"><img :src="logoUrl" alt="51Talk" /><span>Quality Audits</span></a>
         <div class="top-actions">
@@ -308,9 +356,33 @@ createApp({
               <div class="section-heading"><span class="number">01</span><div><h2>{{ t('basicInfo') }}</h2><p>{{ t('basicSub') }}</p></div></div>
               <div class="info-fields">
                 <label>{{ t('teacherName') }}<input v-model.trim="form.teacher" type="text" :placeholder="t('teacherPlaceholder')" /></label>
-                <label>{{ t('sessionDate') }}<input v-model="form.sessionDate" type="date" lang="en-US" /></label>
+                <label class="date-field">{{ t('sessionDate') }}
+                  <div class="date-control" @click.stop>
+                    <button type="button" class="date-input" @click="openDatePicker('sessionDate')"><span>{{ dateLabel(form.sessionDate) }}</span><b>⌄</b></button>
+                    <div v-if="activeDatePicker === 'sessionDate'" class="date-popover">
+                      <div class="date-popover-head"><button type="button" @click="moveCalendarMonth(-1)">‹</button><strong>{{ calendarTitle() }}</strong><button type="button" @click="moveCalendarMonth(1)">›</button></div>
+                      <div class="date-weekdays"><span v-for="day in weekdayNames" :key="day">{{ day }}</span></div>
+                      <div class="date-grid">
+                        <button v-for="cell in calendarCells('sessionDate')" :key="cell.key" type="button" :disabled="cell.blank" :class="{ selected: cell.selected, today: cell.today }" @click="!cell.blank && selectDate('sessionDate', cell.iso)">{{ cell.day }}</button>
+                      </div>
+                      <div class="date-actions"><button type="button" @click="clearDate('sessionDate')">Clear</button><button type="button" @click="selectDate('sessionDate', todayIso())">Today</button></div>
+                    </div>
+                  </div>
+                </label>
                 <label>{{ t('studentName') }}<input v-model.trim="form.student" type="text" :placeholder="t('studentPlaceholder')" /></label>
-                <label>{{ t('auditDate') }}<input v-model="form.date" type="date" lang="en-US" /></label>
+                <label class="date-field">{{ t('auditDate') }}
+                  <div class="date-control" @click.stop>
+                    <button type="button" class="date-input" @click="openDatePicker('date')"><span>{{ dateLabel(form.date) }}</span><b>⌄</b></button>
+                    <div v-if="activeDatePicker === 'date'" class="date-popover">
+                      <div class="date-popover-head"><button type="button" @click="moveCalendarMonth(-1)">‹</button><strong>{{ calendarTitle() }}</strong><button type="button" @click="moveCalendarMonth(1)">›</button></div>
+                      <div class="date-weekdays"><span v-for="day in weekdayNames" :key="day">{{ day }}</span></div>
+                      <div class="date-grid">
+                        <button v-for="cell in calendarCells('date')" :key="cell.key" type="button" :disabled="cell.blank" :class="{ selected: cell.selected, today: cell.today }" @click="!cell.blank && selectDate('date', cell.iso)">{{ cell.day }}</button>
+                      </div>
+                      <div class="date-actions"><button type="button" @click="clearDate('date')">Clear</button><button type="button" @click="selectDate('date', todayIso())">Today</button></div>
+                    </div>
+                  </div>
+                </label>
                 <label>{{ t('auditResult') }}
                   <select v-model="form.result"><option value="">{{ t('autoSuggestion') }}: {{ suggestedResult }}</option><option>Low</option><option>Average</option><option>Above average</option><option>Excellent</option></select>
                 </label>
