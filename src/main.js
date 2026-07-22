@@ -308,9 +308,9 @@ createApp({
               <div class="section-heading"><span class="number">01</span><div><h2>{{ t('basicInfo') }}</h2><p>{{ t('basicSub') }}</p></div></div>
               <div class="info-fields">
                 <label>{{ t('teacherName') }}<input v-model.trim="form.teacher" type="text" :placeholder="t('teacherPlaceholder')" /></label>
-                <label>{{ t('sessionDate') }}<input v-model="form.sessionDate" type="date" /></label>
+                <label>{{ t('sessionDate') }}<input v-model="form.sessionDate" type="date" lang="en-US" /></label>
                 <label>{{ t('studentName') }}<input v-model.trim="form.student" type="text" :placeholder="t('studentPlaceholder')" /></label>
-                <label>{{ t('auditDate') }}<input v-model="form.date" type="date" /></label>
+                <label>{{ t('auditDate') }}<input v-model="form.date" type="date" lang="en-US" /></label>
                 <label>{{ t('auditResult') }}
                   <select v-model="form.result"><option value="">{{ t('autoSuggestion') }}: {{ suggestedResult }}</option><option>Low</option><option>Average</option><option>Above average</option><option>Excellent</option></select>
                 </label>
