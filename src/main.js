@@ -49,6 +49,9 @@ const copy = {
     basicSub: 'Basic information',
     teacherName: 'Teacher Name',
     teacherPlaceholder: 'Enter teacher name',
+    sessionDate: 'Session Date',
+    studentName: 'Student Name',
+    studentPlaceholder: 'Enter student name',
     auditDate: 'Audit Date',
     auditResult: 'Audit Result',
     autoSuggestion: 'Suggested',
@@ -92,6 +95,9 @@ const copy = {
     basicSub: 'Basic information',
     teacherName: '教师姓名',
     teacherPlaceholder: '请输入教师姓名',
+    sessionDate: '上课日期',
+    studentName: '学生姓名',
+    studentPlaceholder: '请输入学生姓名',
     auditDate: '评估日期',
     auditResult: '本次评估结果',
     autoSuggestion: '自动建议',
@@ -132,7 +138,7 @@ createApp({
       standards,
       logoUrl,
       locale: 'en',
-      form: { teacher: '', date: new Date().toISOString().slice(0, 10), result: '', notes: '', ratings: {}, manualDirectives: [] },
+      form: { teacher: '', sessionDate: '', student: '', date: new Date().toISOString().slice(0, 10), result: '', notes: '', ratings: {}, manualDirectives: [] },
       selectedDirective: '',
       exporting: false,
       exportUrl: '',
@@ -211,7 +217,7 @@ createApp({
     },
     clearForm() {
       if (confirm(this.t('confirmClear'))) {
-        this.form = { teacher: '', date: new Date().toISOString().slice(0, 10), result: '', notes: '', ratings: {}, manualDirectives: [] }
+        this.form = { teacher: '', sessionDate: '', student: '', date: new Date().toISOString().slice(0, 10), result: '', notes: '', ratings: {}, manualDirectives: [] }
         localStorage.removeItem('quality-audit-draft')
       }
     },
@@ -302,6 +308,8 @@ createApp({
               <div class="section-heading"><span class="number">01</span><div><h2>{{ t('basicInfo') }}</h2><p>{{ t('basicSub') }}</p></div></div>
               <div class="info-fields">
                 <label>{{ t('teacherName') }}<input v-model.trim="form.teacher" type="text" :placeholder="t('teacherPlaceholder')" /></label>
+                <label>{{ t('sessionDate') }}<input v-model="form.sessionDate" type="date" /></label>
+                <label>{{ t('studentName') }}<input v-model.trim="form.student" type="text" :placeholder="t('studentPlaceholder')" /></label>
                 <label>{{ t('auditDate') }}<input v-model="form.date" type="date" /></label>
                 <label>{{ t('auditResult') }}
                   <select v-model="form.result"><option value="">{{ t('autoSuggestion') }}: {{ suggestedResult }}</option><option>Low</option><option>Average</option><option>Above average</option><option>Excellent</option></select>
